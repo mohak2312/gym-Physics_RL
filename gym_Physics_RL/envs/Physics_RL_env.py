@@ -7,7 +7,7 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 from pyglet import image 
-
+from time import sleep
 
 class square:
     def __init__ (self,pos,dim,color):
@@ -84,10 +84,12 @@ class Player:
         self.draw()
         self.move()
         self.update()
-    
+        
+            
+
+
 
 class Main_Window():
-#class Main_Window(pyglet.window.Window):
     def __init__(self,y_pos,x_pos):
         #super().__init__(800,600,"pyglet Physics engine",vsync=True,)
         #self.win = pyglet.window.Window(width=800, height=600)
@@ -97,8 +99,7 @@ class Main_Window():
         pyglet.clock.schedule_interval(self.update, 1 / 60)
         self.player1 = Player(velocity(10, self.player1_Y_pos), "RIGHT", (255,0,0))
         self.player2 = Player(velocity(self.player2_X_pos, 10), "UP", (0, 0, 255))
-
-    #@self.win.event    
+  
     def on_draw(self):
         self.clear()
         pyglet.gl.glClearColor(1, 1, 1, 1)
@@ -110,35 +111,67 @@ class Main_Window():
     def update(self, dt):
         pass
 
-#class Main_Window():
+   
+
 class Main_Window_1(pyglet.window.Window):
-    def __init__(self):
+    
+    def __init__(self,X_pos,Y_pos):
         super().__init__(800,600,"pyglet Physics engin")
-        #super().__init__()
+        ft = pyglet.font.load('Tahoma', 15 ,bold=True )
+        self.score = pyglet.font.Text(ft, x=800, y=600, color=(0, 0, 1, 1),
+                               halign=pyglet.font.Text.RIGHT, 
+                               valign=pyglet.font.Text.TOP)
         pyglet.clock.schedule_interval(self.update, 1 / 60)
-        Main_Window.player1 = Player(velocity(10, Physics_RLEnv.player1_Y_pos), "RIGHT", (255,0,0))
-        Main_Window.player2 = Player(velocity(Physics_RLEnv.player2_X_pos, 10), "UP", (0, 0, 255))
+        self.player1 = Player(velocity(10, Y_pos), "RIGHT", (255,0,0))
+        self.player2 = Player(velocity(X_pos, 10), "UP", (0, 0, 255))
+        self.scr=0
         
     def on_draw(self):
         self.clear()
         pyglet.gl.glClearColor(1, 1, 1, 1)
         square(velocity(600,0),(10,800),(0,200,0)).draw()
-        Main_Window.player1.run()
-        Main_Window.player2.run()
-        rawimage=pyglet.image.get_buffer_manager().get_color_buffer().get_image_data()
-        format = 'RGB'
-        pitch = rawimage.width * len(format)
-        pixels = rawimage.get_data(format, pitch)
-        #print(pixels)
+        self.player1.run()
+        self.player2.run()
+        a=self.player1.get_cordinates()
+        b=self.player2.get_cordinates()
+        self.win(a,b,self.player1.velocity_x,self.player2.velocity_y)
+        self.game_over(a,b,self.player1.velocity_x,self.player2.velocity_y)
+##        rawimage=pyglet.image.get_buffer_manager().get_color_buffer().get_image_data()
+##        format = 'RGB'
+##        pitch = rawimage.width * len(format)
+##        pixels = rawimage.get_data(format, pitch)
+##        #print(pixels)
 
     def update(self, dt):
         pass
 
+   
+    def win(self,a,b,val_1,val_2):
+        if (abs(a[0]-b[0])<15 and abs(a[1]-b[1])<15):
+                val_1=0
+                val_2=0
+                self.scr=1
+                self.score.text = "Win: %d" % self.scr
+                self.score.draw()
+                
+                pyglet.app.exit()
+                
+             
+
+    def game_over(self,a,b,val_1,val_2):
+            if a[0] >= 585 or b[1] >= 600 :
+                val_1=0
+                val_2=0
+                self.scr=1
+                self.score.text = "Collide: %d" % self.scr
+                self.score.draw()
+                
+                pyglet.app.exit()
 
 class Physics_RLEnv(gym.Env,Main_Window):
   metadata = {'render.modes': ['human']}
   def __init__(self):
-      #global velocity_x,velocity_y
+
       self.player_val=randint(1,10)
       self.player1_Y_pos=randint(120,580)
       self.player2_X_pos=randint(120,580)
@@ -152,10 +185,9 @@ class Physics_RLEnv(gym.Env,Main_Window):
       self.window.player1.velocity_x=0
       self.window.player2.velocity_y=self.player_val
       self.action_list=[]
-      #pyglet.app.run()
 
   def step(self, action):
-      #global velocity_x,velocity_y
+
       self.window.player1.velocity_x = action
       self.window.player2.velocity_y=self.player_val
       self.window.player1.run()
@@ -200,11 +232,22 @@ class Physics_RLEnv(gym.Env,Main_Window):
       self.window.player2.velocity_y=self.player_val
       self.action_list=[]
       return self.get_state()
-      #self.window=Main_Window()
     
   def render(self, mode='human'):
-      window=Main_Window_1()
+      
+      
+      window=Main_Window_1(self.player1_Y_pos,self.player2_X_pos)
+#     for i in range(2):
+      window.player1.velocity_x=self.window.player1.velocity_x
+      window.player2.velocity_y=self.window.player2.velocity_y
+
+##      window.player1 = Player(velocity(10, self.player1_Y_pos), "RIGHT", (255,0,0))
+##      window.player2 = Player(velocity(self.player2_X_pos, 10), "UP", (0, 0, 255))
+##      window.player1.velocity_x=i+2
+##      window.player2.velocity_y=i*2    
       pyglet.app.run()
+      sleep(2)
+      window.close()
 
   def close(self):
     pass
