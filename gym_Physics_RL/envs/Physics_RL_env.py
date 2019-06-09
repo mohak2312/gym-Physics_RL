@@ -142,15 +142,15 @@ class Physics_RLEnv(gym.Env,Main_Window):
       self.player_val=randint(1,10)
       self.player1_Y_pos=randint(120,580)
       self.player2_X_pos=randint(120,580)
-      self.player1 = Player(velocity(10, self.player1_Y_pos), "RIGHT", (255,0,0))
-      self.player2 = Player(velocity(self.player2_X_pos, 10), "UP", (0, 0, 255))
-      self.player1.velocity_x=0
-      self.player2.velocity_y=self.player_val
+      #self.player1 = Player(velocity(10, self.player1_Y_pos), "RIGHT", (255,0,0))
+      #self.player2 = Player(velocity(self.player2_X_pos, 10), "UP", (0, 0, 255))
       self.action_space = spaces.Discrete(100)
       high =np.array(((800,600),(800,600)),dtype=np.int32)
       low = np.array(((0,0),(0,0)),dtype=np.int32)
       self.observation_space = spaces.Box(low=low, high=high,dtype=np.int32)
       self.window=Main_Window(self.player1_Y_pos,self.player2_X_pos)
+      self.window.player1.velocity_x=0
+      self.window.player2.velocity_y=self.player_val
       self.action_list=[]
       #pyglet.app.run()
 
