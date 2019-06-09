@@ -121,7 +121,7 @@ class Main_Window_1(pyglet.window.Window):
         self.score = pyglet.font.Text(ft, x=800, y=600, color=(0, 0, 1, 1),
                                halign=pyglet.font.Text.RIGHT, 
                                valign=pyglet.font.Text.TOP)
-        pyglet.clock.schedule_interval(self.update, 1 / 60)
+        pyglet.clock.schedule_interval(self.update, 1 / 600)
         self.player1 = Player(velocity(10, Y_pos), "RIGHT", (255,0,0))
         self.player2 = Player(velocity(X_pos, 10), "UP", (0, 0, 255))
         self.scr=0
@@ -205,11 +205,11 @@ class Physics_RLEnv(gym.Env,Main_Window):
 
   def get_reward(self,a,b):
         if(abs(a[0]-b[0])<15 and abs(a[1]-b[1])<15):
-            return 10
+            return 20
         elif (a[0] >= 585 or b[1] >= 600):
-            return -10
+            return -20
         else:
-            return 1
+            return -1
         
   def episode_over(self,a,b):
         if a[0] >= 585 or (abs(a[0]-b[0])<15 and abs(a[1]-b[1])<15) or b[1] >= 600 :
