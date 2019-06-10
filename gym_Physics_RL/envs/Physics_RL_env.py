@@ -68,15 +68,16 @@ class Player:
         square(self.pos,(15,15),self.color).draw()
         
         
-    def move(self):        
+    def move(self):
+        
         if self.dir == "UP":
-            self.pos.y+= self.velocity_y
+            self.pos.y += (self.velocity_y * (1/60))
         
         if self.dir == "RIGHT":
-            self.pos.x += self.velocity_x
+            self.pos.x += (self.velocity_x * (1/60))
     
     def get_cordinates(self):
-        m=velocity(self.pos.x,self.pos.y)
+        m=velocity(round(self.pos.x),round(self.pos.y))
         return m.cordinates()
         
         
@@ -121,7 +122,7 @@ class Main_Window_1(pyglet.window.Window):
         self.score = pyglet.font.Text(ft, x=800, y=600, color=(0, 0, 1, 1),
                                halign=pyglet.font.Text.RIGHT, 
                                valign=pyglet.font.Text.TOP)
-        pyglet.clock.schedule_interval(self.update, 1 / 600)
+        pyglet.clock.schedule_interval(self.update, 1 / 1000)
         self.player1 = Player(velocity(10, Y_pos), "RIGHT", (255,0,0))
         self.player2 = Player(velocity(X_pos, 10), "UP", (0, 0, 255))
         self.scr=0
@@ -173,8 +174,8 @@ class Physics_RLEnv(gym.Env,Main_Window):
   def __init__(self):
 
       self.player_val=randint(1,10)
-      self.player1_Y_pos=randint(120,580)
-      self.player2_X_pos=randint(120,580)
+      self.player1_Y_pos=randint(420,580)
+      self.player2_X_pos=randint(420,580)
       #self.player1 = Player(velocity(10, self.player1_Y_pos), "RIGHT", (255,0,0))
       #self.player2 = Player(velocity(self.player2_X_pos, 10), "UP", (0, 0, 255))
       self.action_space = spaces.Discrete(100)
